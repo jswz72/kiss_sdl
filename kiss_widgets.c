@@ -99,6 +99,20 @@ int kiss_label_draw(kiss_label *label, SDL_Renderer *renderer)
 	return 1;
 }
 
+int kiss_button_get_textx(kiss_button* button) {
+	int tw = kiss_textwidth(button->font, button->text, NULL);
+	int textx = button->rect.x + (button->rect.w / 2) - (tw / 2);
+	// If text is longer than button, just start text at beginning of button.
+	if (textx < button->rect.x) {
+		textx = button->rect.x;
+	}
+	return textx;
+}
+
+int kiss_button_get_texty(kiss_button* button) {
+	return button->rect.y + (button->rect.h / 2) - (button->font.fontheight / 2);
+}
+
 int kiss_button_new(kiss_button *button, kiss_window *wdw, char *text,
 	int x, int y)
 {
@@ -114,16 +128,26 @@ int kiss_button_new(kiss_button *button, kiss_window *wdw, char *text,
 		button->normalimg.h);
 	button->textcolor = kiss_white;
 	kiss_string_copy(button->text, KISS_MAX_LENGTH, text, NULL);
-	button->textx = x + button->normalimg.w / 2 -
-		kiss_textwidth(button->font, text, NULL) / 2;
-	button->texty = y + button->normalimg.h / 2 -
-		button->font.fontheight / 2;
+	button->textx = kiss_button_get_textx(button);
+	button->texty = kiss_button_get_texty(button);
 	button->active = 0;
 	button->prelight = 0;
 	button->visible = 0;
 	button->focus = 0;
 	button->wdw = wdw;
 	return 0;
+}
+
+void kiss_button_resize(kiss_button* button, SDL_Rect newRect) {
+	button->rect = newRect;
+	button->textx = kiss_button_get_textx(button);
+	button->texty = kiss_button_get_texty(button);
+}
+
+void kiss_button_resize_to_fit(kiss_button* button, int padding) {
+	int tw = kiss_textwidth(button->font, button->text, NULL);
+	button->rect.w = tw + (2 * padding);
+	button->textx = button->rect.x + padding;
 }
 
 int kiss_button_event(kiss_button *button, SDL_Event *event, int *draw)
@@ -168,15 +192,17 @@ int kiss_button_draw(kiss_button *button, SDL_Renderer *renderer)
 {
 	if (button && button->wdw) button->visible = button->wdw->visible;
 	if (!button || !button->visible || !renderer) return 0;
-	if (button->active)
-		kiss_renderimage(renderer, button->activeimg, button->rect.x,
-			button->rect.y, NULL);
-	else if (button->prelight && !button->active)
-		kiss_renderimage(renderer, button->prelightimg,
-			button->rect.x, button->rect.y, NULL);
-	else
-		kiss_renderimage(renderer, button->normalimg, button->rect.x,
-			button->rect.y, NULL);
+	kiss_image img;
+	if (button->active) {
+		img = button->activeimg;
+	}
+	else if (button->prelight) {
+		img = button->prelightimg;
+	} 
+	else {
+		img = button->normalimg;
+	}
+	kiss_rendertexture(renderer, img.image, button->rect, NULL);
 	kiss_rendertext(renderer, button->text, button->textx, button->texty,
 		button->font, button->textcolor);
 	return 1;

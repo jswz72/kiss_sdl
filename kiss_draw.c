@@ -89,6 +89,15 @@ int kiss_renderimage(SDL_Renderer *renderer, kiss_image image,
 	return 0;
 }
 
+int kiss_rendertexture(SDL_Renderer* renderer, SDL_Texture* tex, SDL_Rect dst,
+	SDL_Rect* clip) {
+	if (!renderer || !tex) return -1;
+	if (clip) dst.w = clip->w;
+	if (clip) dst.h = clip->h;
+	SDL_RenderCopy(renderer, tex, clip, &dst);
+	return 0;
+}
+
 int kiss_rendertext(SDL_Renderer *renderer, char *text, int x, int y,
 	kiss_font font, SDL_Color color)
 {
