@@ -281,12 +281,12 @@ kiss_dirent *kiss_readdir(kiss_dir *dirp);
 int kiss_closedir(kiss_dir *dirp);
 int kiss_isdir(kiss_stat s);
 int kiss_isreg(kiss_stat s);
-int kiss_makerect(SDL_Rect *rect, int x, int y, int h, int w);
+int kiss_makerect(SDL_Rect *rect, int x, int y, int w, int h);
 int kiss_pointinrect(int x, int y, SDL_Rect *rect);
 int kiss_utf8next(char *str, int index);
 int kiss_utf8prev(char *str, int index);
 int kiss_utf8fix(char *str);
-char *kiss_string_copy(char *dest, size_t size, char *str1, char *str2);
+char *kiss_string_copy(char *dest, size_t size, const char *str1, const char *str2);
 int kiss_string_compare(const void *a, const void *b);
 char *kiss_backspace(char *str);
 int kiss_array_new(kiss_array *a);
@@ -311,16 +311,16 @@ int kiss_decorate(SDL_Renderer *renderer, SDL_Rect *rect, SDL_Color color,
 int kiss_image_new(kiss_image *image, char *fname, kiss_array *a,
 	SDL_Renderer* renderer);
 int kiss_font_new(kiss_font *font, char *fname, kiss_array *a, int size);
-SDL_Renderer* kiss_init(char* title, kiss_array *a, int w, int h);
+SDL_Renderer* kiss_init(const char* title, kiss_array *a, int w, int h, SDL_Window* curWindow, SDL_Renderer* curRenderer);
 int kiss_clean(kiss_array *a);
 int kiss_window_new(kiss_window *window, kiss_window *wdw, int decorate,
 	int x, int y, int w, int h);
 int kiss_window_event(kiss_window *window, SDL_Event *event, int *draw);
 int kiss_window_draw(kiss_window *window, SDL_Renderer *renderer);
-int kiss_label_new(kiss_label *label, kiss_window *wdw, char *text,
+int kiss_label_new(kiss_label *label, kiss_window *wdw, const char *text,
 	int x, int y);
 int kiss_label_draw(kiss_label *label, SDL_Renderer *renderer);
-int kiss_button_new(kiss_button *button, kiss_window *wdw, char *text,
+int kiss_button_new(kiss_button *button, kiss_window *wdw, const char *text,
 	int x, int y);
 int kiss_button_event(kiss_button *button, SDL_Event *event, int *draw);
 int kiss_button_draw(kiss_button *button, SDL_Renderer *renderer);

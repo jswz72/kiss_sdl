@@ -179,7 +179,8 @@ int kiss_font_new(kiss_font *font, char *fname, kiss_array *a, int size)
 	return 0;
 }
 
-SDL_Renderer* kiss_init(char* title, kiss_array *a, int w, int h)
+SDL_Renderer* kiss_init(const char* title, kiss_array *a, int w, int h,
+	SDL_Window* curWindow, SDL_Renderer* curRenderer)
 {
 	SDL_Window *window;
 	SDL_Renderer *renderer;
@@ -198,11 +199,21 @@ SDL_Renderer* kiss_init(char* title, kiss_array *a, int w, int h)
 	IMG_Init(IMG_INIT_PNG);
 	TTF_Init();
 	kiss_array_new(a);
-	window = SDL_CreateWindow(title, srect.w / 2 - w / 2,
-		srect.h / 2 - h / 2, w, h, SDL_WINDOW_SHOWN);
+	if (curWindow) {
+		window = curWindow;
+	}
+	else {
+		window = SDL_CreateWindow(title, srect.w / 2 - w / 2,
+			srect.h / 2 - h / 2, w, h, SDL_WINDOW_SHOWN);
+	}
 	if (window) kiss_array_append(a, WINDOW_TYPE, window);
-	renderer = SDL_CreateRenderer(window, -1,
-		SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+	if (curRenderer) {
+		renderer = curRenderer;
+	}
+	else {
+		renderer = SDL_CreateRenderer(window, -1,
+			SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+	}
 	if (renderer) kiss_array_append(a, RENDERER_TYPE, renderer);
 	r += kiss_font_new(&kiss_textfont, "kiss_font.ttf", a,
 		kiss_textfont_size);

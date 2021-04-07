@@ -84,7 +84,7 @@ int kiss_utf8fix(char *str)
 	return 0;
 }
 
-char *kiss_string_copy(char *dest, size_t size, char *str1, char *str2)
+char *kiss_string_copy(char *dest, size_t size, const char *str1, const char *str2)
 {
 	unsigned int len;
 	char *p;

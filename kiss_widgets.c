@@ -63,14 +63,15 @@ int kiss_window_draw(kiss_window *window, SDL_Renderer *renderer)
 	return 1;
 }
 
-int kiss_label_new(kiss_label *label, kiss_window *wdw, char *text,
+int kiss_label_new(kiss_label *label, kiss_window *wdw, const char *text,
 	int x, int y)
 {
 	if (!label || !text) return -1;
 	if (label->font.magic != KISS_MAGIC) label->font = kiss_textfont;
 	label->textcolor = kiss_black;
-	kiss_makerect(&label->rect, x, y, 0, 0);
 	kiss_string_copy(label->text, KISS_MAX_LABEL, text, NULL);
+	int tw = kiss_textwidth(label->font, label->text, NULL);
+	kiss_makerect(&label->rect, x, y, tw, label->font.fontheight);
 	label->visible = 0;
 	label->wdw = wdw;
 	return 0;
@@ -113,7 +114,7 @@ int kiss_button_get_texty(kiss_button* button) {
 	return button->rect.y + (button->rect.h / 2) - (button->font.fontheight / 2);
 }
 
-int kiss_button_new(kiss_button *button, kiss_window *wdw, char *text,
+int kiss_button_new(kiss_button *button, kiss_window *wdw, const char *text,
 	int x, int y)
 {
 	if (!button || !text) return -1;
